@@ -1,0 +1,9 @@
+.DS_Store
+*.log
+*.iml
+.project
+.settings
+.idea/*
+target
+.tmp
+node_modules

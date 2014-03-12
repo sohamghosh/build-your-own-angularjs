@@ -1,7 +1,7 @@
 Build Your Own AngularJS
 
 
-Reference:
+References:
 
 npm install grunt-contrib-jshint --save-dev
 npm install grunt-contrib-jasmine@"~0.6.0" --save-dev

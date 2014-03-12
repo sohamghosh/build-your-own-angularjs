@@ -6,7 +6,7 @@ function Scope() {
 Scope.prototype.$watch = function(watchFn, listenerFn) {
 	var watch = {
 		watchFn: watchFn,
-		listenerFn: listenerFn,
+		listenerFn: listenerFn || function() {},
 		last: {}
 	};
 	this.$$watchers.unshift(watch);
@@ -14,15 +14,16 @@ Scope.prototype.$watch = function(watchFn, listenerFn) {
 
 Scope.prototype.$digest = function() {
 	var length = this.$$watchers.length;
-	var watcher, newValue;
+	var watcher, newValue, oldValue;
 
 	while (length--) {		
 		watcher = this.$$watchers[length];
 		newValue = watcher.watchFn(this);
+		oldValue = watcher.last;
 
-		if (watcher.last != newValue) {
+		if (oldValue != newValue) {
 			watcher.last = newValue;
-			watcher.listenerFn(this);
+			watcher.listenerFn(newValue, oldValue, this);
 		}		
 	}
 };

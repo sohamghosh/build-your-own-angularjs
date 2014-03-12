@@ -1,5 +1,4 @@
 
-
 describe("Scope", function() {
 
 	it("can be constructed and used as an object", function() {
@@ -45,7 +44,7 @@ describe("Scope", function() {
 				function(scope) {
 					return scope.someValue;
 				},
-				function(scope) {
+				function(newValue, oldValue, scope) {
 					scope.counter++;
 				}
 			);
@@ -72,13 +71,54 @@ describe("Scope", function() {
 				function(scope) {
 					return scope.someValue;
 				},
-				function(scope) {
+				function(newValue, oldValue, scope) {
 					scope.counter++;
 				}
 			);
 
 			scope.$digest();
 			expect(scope.counter).toBe(1);
+		});
+
+		it("may have watchers that omit the listener function", function() { 
+			var watchFn = jasmine.createSpy();
+			scope.$watch(watchFn);
+
+			scope.$digest();
+			expect(watchFn).toHaveBeenCalled();
+		});	
+
+		it("triggers chained watchers in the same digest", function() {
+			scope.name = 'Soham';
+
+			scope.$watch(
+				function(scope) { 
+					return scope.name; 
+				}, 
+				function(newValue, oldValue, scope) {
+					if (newValue) {
+						scope.nameUpper = newValue.toUpperCase();
+					} 
+				}
+			);
+
+			scope.$watch(
+				function(scope) { 
+					return scope.nameUpper; 
+				}, 
+				function(newValue, oldValue, scope) {
+					if (newValue) {
+						scope.initial = newValue.substring(0, 1) + '.';
+					} 
+				}
+			);
+
+			scope.$digest();
+			expect(scope.initial).toBe('S.');
+
+			scope.name = 'Ghosh';
+			scope.$digest();
+			expect(scope.initial).toBe('G.');
 		});
 	});	
 });
